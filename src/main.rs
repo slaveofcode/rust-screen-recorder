@@ -83,7 +83,7 @@ fn main() -> io::Result<()> {
         Codec::Vp9 => (vpx_encode::VpxVideoCodecId::VP9, mux::VideoCodecId::VP9),
     };
 
-    let mut vt = webm.add_video_track(width, height, None, mux_codec);
+    let mut video_track = webm.add_video_track(width, height, None, mux_codec);
 
     let quality = Quality::Balanced;
     // Setup the encoder.
@@ -133,7 +133,7 @@ fn main() -> io::Result<()> {
             let ms = time.as_secs() * 1000 + time.subsec_millis() as u64;
 
             for frame in vpx.encode(ms as i64, &frame, STRIDE_ALIGN).unwrap() {
-                vt.add_frame(frame.data, frame.pts as u64 * 1_000_000, frame.key);
+                video_track.add_frame(frame.data, frame.pts as u64 * 1_000_000, frame.key);
             }
         }
 
